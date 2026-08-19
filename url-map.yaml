@@ -1,0 +1,20 @@
+defaultService: https://www.googleapis.com/compute/v1/projects/openclaw-gateway-489207/global/backendServices/alc-kellogg-backend
+name: alc-kellogg-urlmap
+hostRules:
+- hosts:
+  - americanlutheranchurchkellogg.com
+  pathMatcher: primary-matcher
+- hosts:
+  - alckellogg.com
+  - www.alckellogg.com
+  - www.americanlutheranchurchkellogg.com
+  pathMatcher: redirect-matcher
+pathMatchers:
+- name: primary-matcher
+  defaultService: https://www.googleapis.com/compute/v1/projects/openclaw-gateway-489207/global/backendServices/alc-kellogg-backend
+- name: redirect-matcher
+  defaultUrlRedirect:
+    hostRedirect: americanlutheranchurchkellogg.com
+    httpsRedirect: true
+    redirectResponseCode: MOVED_PERMANENTLY_DEFAULT
+    stripQuery: false

@@ -1,0 +1,15 @@
+{
+  "name": "American Lutheran Church Kellogg",
+  "short_name": "ALC Kellogg",
+  "icons": [
+    {
+      "src": "assets/icons/logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f2b48",
+  "theme_color": "#0f2b48"
+}

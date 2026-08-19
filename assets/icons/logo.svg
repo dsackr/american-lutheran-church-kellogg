@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f3d089" />
+      <stop offset="100%" stop-color="#c48b3c" />
+    </linearGradient>
+  </defs>
+  <!-- Background Circle / Crest -->
+  <circle cx="50" cy="50" r="46" fill="#0f2b48" stroke="url(#goldGrad)" stroke-width="2.5" />
+  
+  <!-- Outer Decorative Ring -->
+  <circle cx="50" cy="50" r="41" fill="none" stroke="#d4a359" stroke-width="1" stroke-dasharray="2,3" opacity="0.6"/>
+  
+  <!-- Stylized Luther Rose Petals / Dove Wings -->
+  <path d="M50 16 C53 28, 59 34, 72 37 C60 41, 55 48, 52 61 C48 48, 43 41, 31 37 C43 34, 48 28, 50 16 Z" fill="none" stroke="#d4a359" stroke-width="1.5" opacity="0.4" />
+  
+  <!-- Cross in Gold -->
+  <path d="M46 22 H54 V42 H70 V50 H54 V78 H46 V50 H30 V42 H46 Z" fill="url(#goldGrad)" />
+  
+  <!-- Center Heart Accent -->
+  <circle cx="50" cy="46" r="3" fill="#ffffff" />
+</svg>
