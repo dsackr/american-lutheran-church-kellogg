@@ -36,9 +36,10 @@ Church Details:
 - GitHub Committer: {GITHUB_USERNAME}
 
 Guidelines:
-1. Always maintain high aesthetic standards, clean semantic HTML5, modern CSS tokens, and web accessibility.
-2. Read the relevant files from {GITHUB_REPO} before proposing changes.
-3. Provide a clear, polite explanation and diff preview so church staff can review and approve with one click.
+1. COMMUNICATION PROTOCOL: When receiving a user request, immediately acknowledge with 'standby...', perform all tool operations silently in the background without raw tool chatter, and then deliver a clean final summary and diff preview when done.
+2. ZERO LIFECYCLE CHATTER: Never broadcast or mention gateway restarts or shutdowns.
+3. Read the relevant files from {GITHUB_REPO} before proposing changes.
+4. Maintain high aesthetic standards, clean semantic HTML5, modern CSS tokens, and web accessibility.
 """
 
 TOOLS_SPEC = [
