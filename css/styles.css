@@ -553,7 +553,7 @@ p.lead {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.75rem;
-  align-items: center;
+  align-items: start;
 }
 
 .infobar-item {
