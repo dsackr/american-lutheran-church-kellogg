@@ -1,26 +1,41 @@
 import json
+import logging
 from typing import Dict, Any, List, Optional
 from openai import OpenAI
-from bot.config import HERMES_API_KEY, HERMES_BASE_URL, HERMES_MODEL
-from bot.tools import list_website_files, read_website_file
+from bot.config import (
+    HERMES_API_KEY,
+    HERMES_BASE_URL,
+    HERMES_MODEL,
+    BOT_NAME,
+    CHURCH_NAME,
+    CHURCH_LOCATION,
+    PASTOR_NAME,
+    PASTOR_EMAIL,
+    PRIMARY_DOMAIN,
+    GITHUB_USERNAME,
+)
+from bot.github_client import ALCGitHubClient
 
-SYSTEM_PROMPT = """You are the AI Webmaster Agent for American Lutheran Church in Kellogg, Idaho.
-Pastor: Pastor Craig Shorey (Email: Cdshorey@gmail.com)
-Address: 15 E Mullan Ave, Kellogg, ID 83837
-Domains: americanlutheranchurchkellogg.com, alckellogg.com
-Phone: (208) 786-7791
-Worship Style: Traditional Lutheran Liturgy & Classic Hymnody ONLY (no contemporary/praise band worship).
+logger = logging.getLogger("ALC_Support.Agent")
 
-Your job is to assist church staff and Pastor Craig in making requested changes to the church's static website.
-You have tools to view available pages, read page content, and propose clean, accurate updates.
+SYSTEM_PROMPT = f"""You are '{BOT_NAME}', the autonomous AI Webmaster & Technical Assistant for {CHURCH_NAME} in Kellogg, Idaho.
+Church Details:
+- Location: {CHURCH_LOCATION}
+- Pastor: {PASTOR_NAME}
+- Pastor Email: {PASTOR_EMAIL}
+- Website: {PRIMARY_DOMAIN}
+- GitHub Committer Account: {GITHUB_USERNAME}
+- Worship Style: STRICTLY Traditional Lutheran Liturgy, Historic Hymnody, and Faithful Scripture Preaching (No contemporary or praise band worship).
+
+Your primary role is to assist church staff and Pastor Craig with making accurate, respectful, and well-formatted updates to the church's static website.
+You inspect repository files on GitHub, interpret user requests, and generate clean, unified changes.
 
 Guidelines:
-1. Preserve the website's clean typography, accessibility, and structure.
-2. Worship is strictly traditional Lutheran liturgy and hymns (never suggest or add contemporary/praise band elements).
-3. All visitor forms route to Pastor Craig at Cdshorey@gmail.com.
-4. When asked to update a notice, sermon title, event time, or text, read the relevant file first.
-5. Keep changes precise and focused. Do not rewrite unaffected sections.
-6. Always explain your proposed changes clearly so church staff can review them before publishing.
+1. Always maintain high aesthetic standards, clean semantic HTML5, modern CSS tokens, and web accessibility.
+2. Worship is strictly traditional Lutheran (never add contemporary/praise band wording).
+3. All visitor forms route directly to Pastor Craig at {PASTOR_EMAIL}.
+4. Read the relevant files first before proposing changes.
+5. Provide a clear, polite explanation of what you are proposing to change so the pastor can review and approve with one click.
 """
 
 TOOLS_SPEC = [
@@ -28,7 +43,7 @@ TOOLS_SPEC = [
         "type": "function",
         "function": {
             "name": "list_files",
-            "description": "Lists all available website files that can be edited (e.g. index.html, about.html, sermons.html, etc.)",
+            "description": "Lists all editable website files currently in the GitHub repository (e.g. index.html, about.html, sermons.html, css/styles.css, etc.).",
             "parameters": {"type": "object", "properties": {}},
         },
     },
@@ -36,13 +51,13 @@ TOOLS_SPEC = [
         "type": "function",
         "function": {
             "name": "read_file",
-            "description": "Reads the current content of a specific website file.",
+            "description": "Reads the latest content of a specific file from the GitHub repository.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "filename": {
                         "type": "string",
-                        "description": "Relative path to file, e.g. 'index.html', 'about.html', 'css/styles.css'",
+                        "description": "Path to file, e.g. 'index.html', 'about.html', 'sermons.html', 'js/main.js'",
                     }
                 },
                 "required": ["filename"],
@@ -53,60 +68,70 @@ TOOLS_SPEC = [
         "type": "function",
         "function": {
             "name": "propose_file_edit",
-            "description": "Proposes an updated complete content for a file after making the requested modifications.",
+            "description": "Proposes the complete updated file content with the requested changes applied.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "filename": {
                         "type": "string",
-                        "description": "Relative path to the file to modify",
+                        "description": "Relative path to the file being updated.",
                     },
                     "summary_of_changes": {
                         "type": "string",
-                        "description": "A clear, 1-2 sentence human summary of what was modified.",
+                        "description": "A clear, 1-2 sentence summary of what was updated.",
+                    },
+                    "commit_message": {
+                        "type": "string",
+                        "description": "A concise Git commit message (e.g. 'update Thanksgiving service announcement')",
                     },
                     "updated_content": {
                         "type": "string",
-                        "description": "The complete updated file content with the edits applied.",
+                        "description": "The complete new content for the file.",
                     },
                 },
-                "required": ["filename", "summary_of_changes", "updated_content"],
+                "required": ["filename", "summary_of_changes", "commit_message", "updated_content"],
             },
         },
     },
 ]
 
 
-class HermesWebmasterAgent:
+class ALCSupportHermesAgent:
     def __init__(self):
         self.client = OpenAI(
             api_key=HERMES_API_KEY or "dummy_key",
             base_url=HERMES_BASE_URL,
         )
+        self.github = ALCGitHubClient()
 
     def process_request(self, user_prompt: str, image_asset_path: Optional[str] = None) -> Dict[str, Any]:
         """
-        Executes an agent loop to interpret the user's change request, read necessary files,
-        and propose the exact edit.
+        Processes a user request through the Hermes agent function-calling loop.
         """
         prompt = user_prompt
         if image_asset_path:
-            prompt += f"\n[User attached an image saved at: {image_asset_path}]"
+            prompt += f"\n[User uploaded image asset at: {image_asset_path}]"
 
         messages = [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": prompt},
         ]
 
-        # Multi-turn tool execution loop
         for _ in range(6):
-            response = self.client.chat.completions.create(
-                model=HERMES_MODEL,
-                messages=messages,
-                tools=TOOLS_SPEC,
-                tool_choice="auto",
-                temperature=0.2,
-            )
+            try:
+                response = self.client.chat.completions.create(
+                    model=HERMES_MODEL,
+                    messages=messages,
+                    tools=TOOLS_SPEC,
+                    tool_choice="auto",
+                    temperature=0.2,
+                )
+            except Exception as e:
+                logger.error(f"Hermes API error: {e}")
+                return {
+                    "type": "reply",
+                    "text": f"⚠️ Encountered an error communicating with Hermes model: {e}",
+                }
 
             msg = response.choices[0].message
             messages.append(msg)
@@ -114,16 +139,15 @@ class HermesWebmasterAgent:
             if not msg.tool_calls:
                 return {
                     "type": "reply",
-                    "text": msg.content or "I have processed your message.",
+                    "text": msg.content or "I have reviewed your request.",
                 }
 
-            # Execute tool calls
             for tool in msg.tool_calls:
                 fn_name = tool.function.name
                 args = json.loads(tool.function.arguments)
 
                 if fn_name == "list_files":
-                    files = list_website_files()
+                    files = self.github.list_files()
                     messages.append({
                         "role": "tool",
                         "tool_call_id": tool.id,
@@ -132,11 +156,11 @@ class HermesWebmasterAgent:
 
                 elif fn_name == "read_file":
                     fname = args.get("filename", "")
-                    content = read_website_file(fname)
+                    content = self.github.read_file(fname)
                     messages.append({
                         "role": "tool",
                         "tool_call_id": tool.id,
-                        "content": json.dumps({"filename": fname, "content": content}),
+                        "content": json.dumps({"filename": fname, "content": content or "File not found."}),
                     })
 
                 elif fn_name == "propose_file_edit":
@@ -144,10 +168,11 @@ class HermesWebmasterAgent:
                         "type": "proposal",
                         "filename": args["filename"],
                         "summary": args["summary_of_changes"],
+                        "commit_message": args.get("commit_message", "update website content"),
                         "updated_content": args["updated_content"],
                     }
 
         return {
             "type": "reply",
-            "text": "Completed reviewing request.",
+            "text": "Completed processing request.",
         }
