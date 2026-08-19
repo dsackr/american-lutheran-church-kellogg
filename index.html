@@ -534,8 +534,12 @@
         <div>
           &copy; <span id="year">2026</span> American Lutheran Church. All Rights Reserved. Kellogg, Idaho.
         </div>
-        <div>
+        <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
           <span>Primary: <a href="https://americanlutheranchurchkellogg.com">americanlutheranchurchkellogg.com</a> • Short: <a href="https://alckellogg.com">alckellogg.com</a></span>
+          <span>•</span>
+          <button type="button" data-modal="support-modal" style="background: none; border: none; color: #94a3b8; cursor: pointer; text-decoration: underline; font-size: 0.9rem; padding: 0; display: inline-flex; align-items: center; gap: 0.35rem;">
+            <span>🛠️</span> <span>Website Support</span>
+          </button>
         </div>
       </div>
     </div>
@@ -608,6 +612,46 @@
         <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
           <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
           <button type="submit" class="btn btn-primary">Send Prayer Request</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Modal: Website Support & Feedback Ticket Dialog -->
+  <dialog id="support-modal" aria-labelledby="support-modal-title">
+    <div class="modal-header">
+      <h3 id="support-modal-title">Website Support & Feedback</h3>
+      <button type="button" class="modal-close-btn" aria-label="Close dialog">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="badge-page-context">
+        <span>Current Page:</span> <span id="ticket-page-display">index.html</span>
+      </div>
+      <p style="margin-bottom: 1.25rem; font-size: 0.95rem; color: var(--color-slate);">
+        Notice a typo, outdated service time, or want to suggest a change? Fill out this quick form and our <strong>ALC Support</strong> system will automatically create a ticket and update the site.
+      </p>
+      <form id="support-form">
+        <input type="hidden" id="ticket-page-url" value="">
+        <input type="hidden" id="ticket-page-title" value="">
+        
+        <div class="form-group">
+          <label for="ticket-text" class="form-label">What would you like updated or fixed? *</label>
+          <textarea id="ticket-text" class="form-control" rows="4" placeholder="Example: Update Wednesday Bible Study time to 6:30 PM, or fix paragraph 2 on this page..." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="ticket-name" class="form-label">Your Name (Optional)</label>
+          <input type="text" id="ticket-name" class="form-control" placeholder="Pastor Craig / Church Member">
+        </div>
+
+        <div class="form-group">
+          <label for="ticket-contact" class="form-label">Email or Phone (Optional, for follow-up)</label>
+          <input type="text" id="ticket-contact" class="form-control" placeholder="Cdshorey@gmail.com or phone number">
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+          <button type="button" class="btn btn-outline" data-close-modal>Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit Support Ticket</button>
         </div>
       </form>
     </div>

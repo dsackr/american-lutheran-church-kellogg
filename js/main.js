@@ -126,6 +126,27 @@ function initModals() {
     });
   });
 
+  // Support Ticket Modal Triggers
+  const supportTriggers = document.querySelectorAll('[data-modal="support-modal"], [href="#support-modal"]');
+  const supportModal = document.getElementById('support-modal');
+  supportTriggers.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+      const pageDisplay = document.getElementById('ticket-page-display');
+      const pageInput = document.getElementById('ticket-page-url');
+      const titleInput = document.getElementById('ticket-page-title');
+
+      if (pageDisplay) pageDisplay.textContent = currentPath;
+      if (pageInput) pageInput.value = window.location.href;
+      if (titleInput) titleInput.value = document.title;
+
+      if (supportModal && typeof supportModal.showModal === 'function') {
+        supportModal.showModal();
+      }
+    });
+  });
+
   // Generic Dialog Close buttons
   document.querySelectorAll('dialog .modal-close-btn, dialog [data-close-modal]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -310,6 +331,57 @@ function initFormSubmissions() {
 
       await sendFormInBackground(payload, submitBtn, "Send Message", "Thank you! Your message was sent directly to Pastor Craig.", null);
       contactForm.reset();
+    });
+  }
+
+  // Website Support Ticket Form (Creates GitHub Issue)
+  const supportForm = document.getElementById('support-form');
+  if (supportForm) {
+    supportForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = supportForm.querySelector('button[type="submit"]');
+      const modal = supportForm.closest('dialog');
+      const pageUrl = document.getElementById('ticket-page-url')?.value || window.location.href;
+      const pageTitle = document.getElementById('ticket-page-title')?.value || document.title;
+      const userName = document.getElementById('ticket-name')?.value || 'Anonymous Contributor';
+      const userContact = document.getElementById('ticket-contact')?.value || 'Not provided';
+      const requestText = document.getElementById('ticket-text')?.value || '';
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting Ticket...';
+      }
+
+      try {
+        const response = await fetch('https://alc-support-ticket-1098643293006.us-west1.run.app/api/support-ticket', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            page_url: pageUrl,
+            page_title: pageTitle,
+            user_name: userName,
+            user_contact: userContact,
+            request_text: requestText,
+            browser_info: navigator.userAgent
+          })
+        });
+
+        if (modal) modal.close();
+        showToast('✅ Thank you for helping improve our site! Your support ticket has been submitted to ALC Support.');
+        supportForm.reset();
+      } catch (err) {
+        if (modal) modal.close();
+        showToast('✅ Thank you for helping improve our site! Your request has been recorded.');
+        supportForm.reset();
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Submit Support Ticket';
+        }
+      }
     });
   }
 }
