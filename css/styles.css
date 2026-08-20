@@ -1210,3 +1210,42 @@ dialog::backdrop {
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
 }
+
+/* Enhanced Mobile Responsiveness - Added after user feedback */
+@media (max-width: 640px) {
+  .infobar-card {
+    grid-template-columns: 1fr !important;
+    padding: 1.5rem;
+    gap: 1.5rem;
+  }
+  
+  .hero-title {
+    font-size: 2.1rem !important;
+    line-height: 1.15;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .btn {
+    padding: 1rem 1.75rem;
+    font-size: 1rem;
+  }
+  
+  .service-infobar {
+    margin-top: -1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .mobile-menu {
+    padding: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-badge {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+  }
+}
