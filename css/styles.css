@@ -1288,3 +1288,41 @@ dialog::backdrop {
     font-size: 1rem;
   }
 }
+
+/* Major Mobile Header Overhaul for Issue #15 - Clean, non-cramped layout */
+@media (max-width: 768px) {
+  .header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .nav-actions {
+    gap: 0.75rem;
+  }
+  
+  .btn-primary, .btn {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.9rem;
+    min-width: auto;
+  }
+  
+  /* Make Plan A Visit button smaller or stack on very small screens */
+  .hero-actions .btn {
+    margin-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .brand-logo-text {
+    font-size: 0.95rem;
+  }
+  
+  .hero-badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
+  }
+  
+  .hero-title {
+    font-size: 1.75rem !important;
+    line-height: 1.2;
+  }
+}
