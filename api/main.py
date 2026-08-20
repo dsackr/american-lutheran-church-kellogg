@@ -21,13 +21,9 @@ ALLOWED_ORIGINS = [
 
 class SupportTicketHandler(BaseHTTPRequestHandler):
     def _set_cors(self):
-        origin = self.headers.get("Origin", "*")
-        if origin in ALLOWED_ORIGINS or "*" in ALLOWED_ORIGINS:
-            self.send_header("Access-Control-Allow-Origin", origin)
-        else:
-            self.send_header("Access-Control-Allow-Origin", "https://americanlutheranchurchkellogg.com")
+        self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS, GET")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Accept")
+        self.send_header("Access-Control-Allow-Headers", "*")
 
     def do_OPTIONS(self):
         self.send_response(204)

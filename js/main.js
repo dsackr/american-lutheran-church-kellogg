@@ -353,7 +353,7 @@ function initFormSubmissions() {
       }
 
       try {
-        const response = await fetch('https://alc-support-ticket-1098643293006.us-west1.run.app/api/support-ticket', {
+        const response = await fetch('/api/support-ticket', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -369,13 +369,18 @@ function initFormSubmissions() {
           })
         });
 
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.error || 'Server returned an error');
+        }
+
         if (modal) modal.close();
-        showToast('✅ Thank you for helping improve our site! Your support ticket has been submitted to ALC Support.');
+        showToast(`✅ Thank you! Ticket #${data.issue_number} submitted to ALC Support.`);
         supportForm.reset();
       } catch (err) {
-        if (modal) modal.close();
-        showToast('✅ Thank you for helping improve our site! Your request has been recorded.');
-        supportForm.reset();
+        showToast('⚠️ Unable to submit ticket. Please check your connection and try again.');
+        console.error('Support ticket error:', err);
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
