@@ -1249,3 +1249,42 @@ dialog::backdrop {
     padding: 0.5rem 1rem;
   }
 }
+
+/* Additional Mobile Fixes for Issue #15 (index.html formatting) */
+@media (max-width: 640px) {
+  .nav-actions {
+    gap: 0.5rem;
+  }
+  
+  .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.3;
+  }
+  
+  .hero-content {
+    padding: 2rem 1rem;
+  }
+  
+  .service-infobar {
+    margin-top: -1rem;
+    margin-bottom: 2rem;
+    padding: 0 1rem;
+  }
+  
+  .infobar-card {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.85rem !important;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+}
