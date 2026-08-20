@@ -1211,118 +1211,175 @@ dialog::backdrop {
   box-shadow: var(--shadow-md);
 }
 
-/* Enhanced Mobile Responsiveness - Added after user feedback */
-@media (max-width: 640px) {
-  .infobar-card {
-    grid-template-columns: 1fr !important;
-    padding: 1.5rem;
-    gap: 1.5rem;
+/* ==========================================================================
+   Comprehensive Mobile & Tablet Responsive Design System
+   ========================================================================== */
+
+@media (max-width: 960px) {
+  .site-header {
+    height: 70px;
   }
-  
-  .hero-title {
-    font-size: 2.1rem !important;
-    line-height: 1.15;
+
+  .site-header .nav-actions [data-open-visit] {
+    display: none; /* Hide header CTA on mobile/tablet so branding never gets squished */
   }
-  
-  .hero-subtitle {
-    font-size: 1.1rem;
+
+  .brand-logo-icon {
+    width: 38px;
+    height: 38px;
   }
-  
-  .btn {
-    padding: 1rem 1.75rem;
-    font-size: 1rem;
+
+  .brand-title {
+    font-size: 1.05rem;
   }
-  
-  .service-infobar {
-    margin-top: -1.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  .mobile-menu {
-    padding: 1.5rem 1rem;
+
+  .brand-subtitle {
+    font-size: 0.7rem;
   }
 }
 
-@media (max-width: 480px) {
-  .hero-badge {
-    font-size: 0.8rem;
-    padding: 0.5rem 1rem;
-  }
-}
-
-/* Additional Mobile Fixes for Issue #15 (index.html formatting) */
-@media (max-width: 640px) {
-  .nav-actions {
-    gap: 0.5rem;
-  }
-  
-  .btn {
-    padding: 0.75rem 1.25rem;
-    font-size: 0.95rem;
-    white-space: normal;
-    text-align: center;
-    line-height: 1.3;
-  }
-  
-  .hero-content {
-    padding: 2rem 1rem;
-  }
-  
-  .service-infobar {
-    margin-top: -1rem;
-    margin-bottom: 2rem;
-    padding: 0 1rem;
-  }
-  
-  .infobar-card {
-    padding: 1.25rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-title {
-    font-size: 1.85rem !important;
-  }
-  
-  .hero-subtitle {
-    font-size: 1rem;
-  }
-}
-
-/* Major Mobile Header Overhaul for Issue #15 - Clean, non-cramped layout */
 @media (max-width: 768px) {
-  .header {
-    padding: 0.75rem 1rem;
+  .top-banner {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
   }
-  
-  .nav-actions {
-    gap: 0.75rem;
-  }
-  
-  .btn-primary, .btn {
-    padding: 0.65rem 1.25rem;
-    font-size: 0.9rem;
-    min-width: auto;
-  }
-  
-  /* Make Plan A Visit button smaller or stack on very small screens */
-  .hero-actions .btn {
-    margin-bottom: 0.75rem;
-  }
-}
 
-@media (max-width: 480px) {
-  .brand-logo-text {
-    font-size: 0.95rem;
+  .banner-left .banner-item:nth-child(2) {
+    display: none; /* Hide street address in top bar on mobile (prominent in hero & infobar) */
   }
-  
+
+  .container {
+    padding-left: 1.15rem;
+    padding-right: 1.15rem;
+  }
+
+  .hero-section {
+    padding: 3.5rem 0 4.5rem 0;
+    min-height: auto;
+  }
+
   .hero-badge {
     font-size: 0.75rem;
     padding: 0.35rem 0.75rem;
+    margin-bottom: 1rem;
   }
-  
+
   .hero-title {
-    font-size: 1.75rem !important;
-    line-height: 1.2;
+    font-size: clamp(1.85rem, 6vw, 2.35rem) !important;
+    line-height: 1.18;
+    margin-bottom: 1rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 1.75rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+    padding: 0.85rem 1.5rem;
+    font-size: 1rem;
+    justify-content: center;
+  }
+
+  .service-infobar {
+    margin-top: 1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .infobar-card {
+    grid-template-columns: 1fr !important;
+    padding: 1.35rem 1.25rem;
+    gap: 1.25rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .infobar-item {
+    gap: 0.85rem;
+  }
+
+  .infobar-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .section {
+    padding: 3.5rem 0;
+  }
+
+  .section-header {
+    margin-bottom: 2.25rem;
+  }
+
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+  }
+
+  .card-body {
+    padding: 1.25rem;
+  }
+
+  .quote-card {
+    padding: 2rem 1.5rem;
+    border-radius: var(--radius-xl);
+  }
+
+  .quote-card blockquote {
+    font-size: 1.35rem;
+    line-height: 1.45;
+  }
+
+  .map-frame {
+    height: 280px;
+  }
+
+  .mobile-menu {
+    padding: 1.5rem 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .site-header {
+    height: 64px;
+  }
+
+  .brand-logo {
+    gap: 0.5rem;
+  }
+
+  .brand-logo-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .brand-title {
+    font-size: 0.95rem;
+  }
+
+  .brand-subtitle {
+    font-size: 0.65rem;
+    letter-spacing: 0.04em;
+  }
+
+  .hero-title {
+    font-size: 1.7rem !important;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.95rem;
   }
 }
