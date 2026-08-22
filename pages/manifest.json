@@ -1,0 +1,38 @@
+{
+  "index": {
+    "active_page": "index",
+    "ticket_placeholder": "Example: Update Wednesday Bible Study time to 6:30 PM, or fix paragraph 2 on this page...",
+    "has_mobile_call_cta": true,
+    "has_banner_aria_label": true
+  },
+  "about": {
+    "active_page": "about",
+    "ticket_placeholder": "Example: Update pastor profile or fix text on this page...",
+    "has_mobile_call_cta": false,
+    "has_banner_aria_label": false
+  },
+  "sermons": {
+    "active_page": "sermons",
+    "ticket_placeholder": "Example: Update sermon recording link or fix text on this page...",
+    "has_mobile_call_cta": false,
+    "has_banner_aria_label": false
+  },
+  "ministries": {
+    "active_page": "ministries",
+    "ticket_placeholder": "Example: Update ministry meeting times or description on this page...",
+    "has_mobile_call_cta": false,
+    "has_banner_aria_label": false
+  },
+  "visit": {
+    "active_page": "visit",
+    "ticket_placeholder": "Example: Update directions, service details, or fix text on this page...",
+    "has_mobile_call_cta": false,
+    "has_banner_aria_label": false
+  },
+  "give": {
+    "active_page": "give",
+    "ticket_placeholder": "Example: Update stewardship notes or fix text on this page...",
+    "has_mobile_call_cta": false,
+    "has_banner_aria_label": false
+  }
+}

@@ -1,0 +1,15 @@
+# Build-time-only files for the static site templating system (build.py /
+# test_build.py / partials/ / pages/). These are source inputs to build.py,
+# not meant to be served — the *output* of build.py (root-level index.html,
+# about.html, etc.) is what nginx actually serves.
+#
+# NOTE: scoped narrowly to only the new files added by the header/footer/
+# support-modal partials refactor. Pre-existing repo contents (bot/, api/,
+# .git, *.md) were already being copied into the image before this file
+# existed and are left untouched here — that's a separate pre-existing
+# question, not part of this change.
+partials/
+pages/
+build.py
+test_build.py
+kpf.md

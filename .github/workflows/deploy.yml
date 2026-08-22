@@ -23,6 +23,12 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Verify static build is up to date (partials/manifest -> root HTML)
+        run: python3 build.py --check
+
+      - name: Run structural tests (nav, support-form, footer parity)
+        run: python3 test_build.py
+
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
