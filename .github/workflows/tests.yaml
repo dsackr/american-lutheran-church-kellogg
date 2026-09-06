@@ -1,0 +1,84 @@
+name: Automated Tests & Verification
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Run Pytest Suite & Coverage
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # for updating docs/TEST_LEDGER.md on push
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements-test.txt
+          pip install -r bot/requirements.txt
+
+      - name: Run Tests with Coverage
+        shell: bash
+        run: |
+          python -m pytest tests/ \
+            --cov=api \
+            --cov=bot \
+            --cov-report=term-missing \
+            --cov-report=html \
+            --cov-report=xml | tee pytest-output.txt
+
+      - name: Publish Coverage to Job Summary
+        if: always()
+        run: |
+          {
+            echo '## ALC Kellogg Test Coverage'
+            echo
+            python -m coverage report --format=markdown
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Coverage HTML Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-html
+          path: htmlcov/
+          retention-days: 30
+
+      - name: Record Result in Test Ledger
+        if: always() && contains(fromJSON('["push", "workflow_dispatch"]'), github.event_name) && github.ref == 'refs/heads/main'
+        shell: bash
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          set -euo pipefail
+          detail=$(grep -E '^=+ .*(passed|failed|error).* =+$' pytest-output.txt | tail -1 | tr -d '=' | xargs || echo 'no summary captured')
+          coverage=$(python -m coverage report --format=total 2>/dev/null || echo '?')
+          row="| $(date -u +%F) | ${GITHUB_SHA::7} | full-suite | ${JOB_STATUS} | ${detail} | ${coverage}% | CI |"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git checkout -B main origin/main
+            printf '%s\n' "$row" >> docs/TEST_LEDGER.md
+            git add docs/TEST_LEDGER.md
+            git commit -m "Record test result for ${GITHUB_SHA::7} [skip ci]" || exit 0
+            if git push origin main; then
+              exit 0
+            fi
+            git reset --hard origin/main
+            sleep $((attempt * 3))
+          done
+          echo "::warning::could not record test-ledger row after 5 attempts"

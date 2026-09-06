@@ -1,8 +1,10 @@
 import os
 from pathlib import Path
-from dotenv import load_dotenv
-
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 # Agent Identity
 BOT_NAME = "ALC Support"
@@ -34,3 +36,9 @@ HERMES_MODEL = os.getenv("HERMES_MODEL", "nousresearch/hermes-3-llama-3.1-70b")
 # Local Workspace (if running alongside local clone)
 BASE_DIR = Path(__file__).resolve().parent.parent
 REPO_PATH = Path(os.getenv("REPO_PATH", str(BASE_DIR)))
+
+# GCP Cloud Run Deployment Configuration
+GCP_PROJECT = os.getenv("GCP_PROJECT", "openclaw-gateway-489207")
+GCP_REGION = os.getenv("GCP_REGION", "us-west1")
+CLOUD_RUN_SERVICE = os.getenv("CLOUD_RUN_SERVICE", "alc-kellogg")
+

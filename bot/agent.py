@@ -1,7 +1,11 @@
 import json
 import logging
 from typing import Dict, Any, List, Optional
-from openai import OpenAI
+try:
+    from openai import OpenAI
+except ImportError:
+    OpenAI = None
+
 from bot.config import (
     HERMES_API_KEY,
     HERMES_BASE_URL,
@@ -13,6 +17,8 @@ from bot.config import (
     PASTOR_EMAIL,
     PRIMARY_DOMAIN,
     GITHUB_USERNAME,
+    GITHUB_REPO,
+    GITHUB_BRANCH,
 )
 from bot.github_client import ALCGitHubClient
 
@@ -102,16 +108,25 @@ TOOLS_SPEC = [
 
 class ALCSupportHermesAgent:
     def __init__(self):
-        self.client = OpenAI(
-            api_key=HERMES_API_KEY or "dummy_key",
-            base_url=HERMES_BASE_URL,
-        )
+        if OpenAI is not None:
+            self.client = OpenAI(
+                api_key=HERMES_API_KEY or "dummy_key",
+                base_url=HERMES_BASE_URL,
+            )
+        else:
+            self.client = None
         self.github = ALCGitHubClient()
 
     def process_request(self, user_prompt: str, image_asset_path: Optional[str] = None) -> Dict[str, Any]:
         """
         Processes a user request through the Hermes agent function-calling loop.
         """
+        if not self.client:
+            return {
+                "type": "reply",
+                "text": "⚠️ OpenAI client library is not installed.",
+            }
+
         prompt = user_prompt
         if image_asset_path:
             prompt += f"\n[User uploaded image asset at: {image_asset_path}]"

@@ -1,15 +1,12 @@
-FROM nginx:alpine
+FROM python:3.11-slim
 
-# Remove default nginx config and html
-RUN rm -rf /etc/nginx/conf.d/* /usr/share/nginx/html/*
+WORKDIR /app
 
-# Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy website and server files
+COPY . /app/
 
-# Copy static website assets
-COPY . /usr/share/nginx/html/
-
-# Expose port 8080 (standard for Cloud Run)
+ENV PORT=8080
 EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["python3", "api/main.py"]
+

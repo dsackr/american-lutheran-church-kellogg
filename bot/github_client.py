@@ -1,7 +1,14 @@
 import base64
 import logging
 from typing import Optional, List, Tuple, Dict, Any
-from github import Github, GithubException, Auth
+
+try:
+    from github import Github, GithubException, Auth
+except ImportError:
+    Github = None
+    GithubException = Exception
+    Auth = None
+
 from bot.config import GITHUB_PAT, GITHUB_REPO, GITHUB_BRANCH, GITHUB_USERNAME
 
 logger = logging.getLogger("ALC_Support.GitHub")
@@ -9,11 +16,14 @@ logger = logging.getLogger("ALC_Support.GitHub")
 
 class ALCGitHubClient:
     def __init__(self):
-        if GITHUB_PAT:
-            auth = Auth.Token(GITHUB_PAT)
-            self.gh = Github(auth=auth)
+        if Github is not None:
+            if GITHUB_PAT and Auth is not None:
+                auth = Auth.Token(GITHUB_PAT)
+                self.gh = Github(auth=auth)
+            else:
+                self.gh = Github()
         else:
-            self.gh = Github()
+            self.gh = None
         self.repo_name = GITHUB_REPO
         self.branch = GITHUB_BRANCH
 

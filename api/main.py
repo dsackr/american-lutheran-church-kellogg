@@ -25,19 +25,63 @@ class SupportTicketHandler(BaseHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS, GET")
         self.send_header("Access-Control-Allow-Headers", "*")
 
+    def do_HEAD(self):
+        self.do_GET()
+
     def do_OPTIONS(self):
         self.send_response(204)
         self._set_cors()
         self.end_headers()
 
     def do_GET(self):
-        if self.path == "/health" or self.path == "/":
+        if self.path in ("/health", "/api/health") or (self.path == "/" and "application/json" in self.headers.get("Accept", "")):
             self.send_response(200)
             self._set_cors()
             self.send_header("Content-Type", "application/json")
             self.end_headers()
             self.wfile.write(json.dumps({"status": "ok", "service": "alc-support-ticket-api"}).encode("utf-8"))
             return
+
+        # Determine static file path
+        clean_path = self.path.split("?")[0].split("#")[0].lstrip("/")
+        if not clean_path or clean_path == "":
+            clean_path = "index.html"
+        
+        # Check direct path or clean HTML URL (.e.g /about -> about.html)
+        doc_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+        target_file = os.path.join(doc_root, clean_path)
+
+        if os.path.isdir(target_file):
+            target_file = os.path.join(target_file, "index.html")
+        elif not os.path.exists(target_file) and os.path.exists(target_file + ".html"):
+            target_file = target_file + ".html"
+
+        if os.path.isfile(target_file):
+            import mimetypes
+            content_type, _ = mimetypes.guess_type(target_file)
+            if not content_type:
+                content_type = "application/octet-stream"
+                if target_file.endswith(".webmanifest"):
+                    content_type = "application/manifest+json"
+
+            self.send_response(200)
+            self._set_cors()
+            self.send_header("Content-Type", content_type)
+            self.send_header("X-Content-Type-Options", "nosniff")
+            self.send_header("X-Frame-Options", "SAMEORIGIN")
+            self.end_headers()
+            with open(target_file, "rb") as f:
+                self.wfile.write(f.read())
+            return
+
+        if self.path == "/":
+            self.send_response(200)
+            self._set_cors()
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "ok", "service": "alc-support-ticket-api"}).encode("utf-8"))
+            return
+
         self.send_response(404)
         self.end_headers()
 

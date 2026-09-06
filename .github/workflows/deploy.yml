@@ -44,5 +44,5 @@ jobs:
             --platform managed \
             --region us-west1 \
             --allow-unauthenticated \
-            --project openclaw-gateway-489207 \
+            --project alc-kellogg-production \
             --quiet
